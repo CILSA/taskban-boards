@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import serverless from "serverless-http";
 import express from "express";
-import { fetchBoards, fetchBoardById, addBoard } from "./controllers/controller.js";
+import { fetchBoards, fetchBoardById, addBoard } from "./controllers/controller";
 
 const app = express();
 app.use(cors());
