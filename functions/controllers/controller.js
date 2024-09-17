@@ -1,4 +1,17 @@
-// Obtener un tablero por su ID, incluyendo sus columnas
+import { getBoards, getBoardById, createBoard, updateBoard, deleteBoard } from "../models/model";
+
+// Obtener todos los tableros
+export const fetchBoards = async (req, res) => {
+    try {
+        const boards = await getBoards();
+        res.json(boards);
+    } catch (error) {
+        console.error("Error fetching boards:", error);
+        res.status(500).json({ message: "Error fetching boards" });
+    }
+};
+
+// Obtener un tablero por su ID
 export const fetchBoardById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -6,14 +19,14 @@ export const fetchBoardById = async (req, res) => {
         if (!board) {
             return res.status(404).json({ message: "Board not found" });
         }
-        res.json(board); // El tablero ahora incluye las columnas
+        res.json(board);
     } catch (error) {
         console.error("Error fetching board:", error);
         res.status(500).json({ message: "Error fetching board" });
     }
 };
 
-// Crear un tablero con columnas (opcional)
+// Crear un nuevo tablero con columnas
 export const addBoard = async (req, res) => {
     const { name, description, columns } = req.body;
 
@@ -22,7 +35,7 @@ export const addBoard = async (req, res) => {
     }
 
     try {
-        const boardId = await createBoard({ name, description }, columns || []);
+        const boardId = await createBoard({ name, description, columns });
         res.status(201).json({ message: "Board created", boardId });
     } catch (error) {
         console.error("Error creating board:", error);
@@ -30,7 +43,7 @@ export const addBoard = async (req, res) => {
     }
 };
 
-// Actualizar un tablero por su ID, incluyendo sus columnas
+// Actualizar un tablero por su ID
 export const updateBoardById = async (req, res) => {
     const { id } = req.params;
     const { name, description, columns } = req.body;
@@ -40,7 +53,7 @@ export const updateBoardById = async (req, res) => {
     }
 
     try {
-        const updatedBoard = await updateBoard(id, { name, description }, columns || []);
+        const updatedBoard = await updateBoard(id, { name, description, columns });
         if (!updatedBoard) {
             return res.status(404).json({ message: "Board not found" });
         }
@@ -48,5 +61,20 @@ export const updateBoardById = async (req, res) => {
     } catch (error) {
         console.error("Error updating board:", error);
         res.status(500).json({ message: "Error updating board" });
+    }
+};
+
+// Eliminar un tablero por su ID
+export const deleteBoardById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleted = await deleteBoard(id);
+        if (!deleted) {
+            return res.status(404).json({ message: "Board not found" });
+        }
+        res.json({ message: "Board deleted" });
+    } catch (error) {
+        console.error("Error deleting board:", error);
+        res.status(500).json({ message: "Error deleting board" });
     }
 };

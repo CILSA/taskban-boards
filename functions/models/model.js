@@ -1,78 +1,76 @@
-// Obtener un tablero por su ID, incluyendo sus columnas
+import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+
+// Configuración de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCx8GI5km0guJojFuOb9KDKNSclqFQBhLI",
+    authDomain: "taskban-v1.firebaseapp.com",
+    projectId: "taskban-v1",
+    storageBucket: "taskban-v1.appspot.com",
+    messagingSenderId: "774075443466",
+    appId: "1:774075443466:web:0b1ccf90595264ef8872f3",
+    measurementId: "G-1MCX6F9W86"
+};
+
+// Inicializa Firebase y Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Obtener todos los tableros
+export const getBoards = async () => {
+    const boardsCollection = collection(db, 'boards');
+    const boardsSnapshot = await getDocs(boardsCollection);
+    const boardsList = boardsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return boardsList;
+};
+
+// Obtener un tablero por su ID
 export const getBoardById = async (id) => {
     const boardRef = doc(db, 'boards', id);
     const boardSnapshot = await getDoc(boardRef);
-
     if (boardSnapshot.exists()) {
-        const boardData = boardSnapshot.data();
-
-        // Obtener las columnas del tablero desde una subcolección
-        const columnsCollectionRef = collection(boardRef, 'columns');
-        const columnsSnapshot = await getDocs(columnsCollectionRef);
-        const columns = columnsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-
-        // Incluir las columnas en la respuesta del tablero
-        return {
-            id: boardSnapshot.id,
-            ...boardData,
-            columns: columns || [], // Devuelve un array vacío si no hay columnas
-        };
+        return { id: boardSnapshot.id, ...boardSnapshot.data() };
     } else {
-        console.log("No se encontró el tablero con ese ID");
+        console.log("No se encontró el board con ese ID");
         return null;
     }
 };
 
-// Crear un tablero con columnas (opcional, si necesitas manejar columnas al crear un tablero)
-export const createBoard = async (board, columns = []) => {
+// Crear un nuevo tablero con columnas
+export const createBoard = async (board) => {
     try {
         const boardsCollection = collection(db, 'boards');
         const docRef = await addDoc(boardsCollection, board);
-
-        // Si hay columnas, agregarlas a la subcolección
-        if (columns.length > 0) {
-            const columnsCollectionRef = collection(docRef, 'columns');
-            for (const column of columns) {
-                await addDoc(columnsCollectionRef, column);
-            }
-        }
-
         return docRef.id; // Devuelve el ID generado por Firestore
     } catch (error) {
-        console.error("Error al crear el tablero:", error);
+        console.error("Error al crear el board:", error);
         throw error;
     }
 };
 
-// Actualizar un tablero por su ID, incluyendo las columnas
-export const updateBoard = async (id, boardData, columns = []) => {
+// Actualizar un tablero por su ID
+export const updateBoard = async (id, boardData) => {
     const boardRef = doc(db, 'boards', id);
     try {
-        // Actualizar los datos del tablero
         await updateDoc(boardRef, boardData);
-
-        // Actualizar las columnas
-        const columnsCollectionRef = collection(boardRef, 'columns');
-        const columnsSnapshot = await getDocs(columnsCollectionRef);
-
-        // Borrar las columnas anteriores
-        const batch = db.batch();
-        columnsSnapshot.forEach((doc) => {
-            batch.delete(doc.ref);
-        });
-        await batch.commit();
-
-        // Agregar las nuevas columnas
-        for (const column of columns) {
-            await addDoc(columnsCollectionRef, column);
-        }
-
-        return { id, ...boardData, columns };
+        return { id, ...boardData };
     } catch (error) {
-        console.error("Error al actualizar el tablero:", error);
+        console.error("Error al actualizar el board:", error);
         throw error;
+    }
+};
+
+// Eliminar un tablero por su ID
+export const deleteBoard = async (id) => {
+    const boardRef = doc(db, 'boards', id);
+    try {
+        await deleteDoc(boardRef);
+        return true;
+    } catch (error) {
+        console.error("Error al eliminar el board:", error);
+        return false;
     }
 };
