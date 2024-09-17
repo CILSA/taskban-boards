@@ -1,53 +1,17 @@
-// server.js
 import express from "express";
 import cors from "cors";
-import { getCertificates } from "./MOCK-CERTIFICATES.js";
-import { getListings, getListingById, getListingCompare } from "./MOCK-LISTINGS.js";
+import routes from "./routes/routes.js";
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-const port = process.env.PORT || 5000;
-const router = express.Router();
+const port = process.env.PORT || 4004;
 
-router.get("/certs", (req, res) => {
-    res.json(getCertificates());
-});
+// Usa las rutas para boards
+app.use('/api', routes);
 
-router.get("/listings", (req, res) => {
-    const listings = getListings();
-    const { id } = req.query;
-
-    // Verificar si hay un ID en los query params
-    if (id) {
-        const listing = getListingById(Number(id));
-        if (listing) {
-            res.json(listing);
-        } else {
-            res.status(404).json({ message: "Listing not found" });
-        }
-    } else {
-        // Si no hay ID, devolver todos los listings
-        res.json(listings);
-    }
-});
-
-router.get("/compare", (req, res) => {
-    const ids = req.query.ids;
-
-    // Convierte `ids` a un array de números
-    const idsArray = ids ? ids.split(',').map(Number) : [];
-
-    // Obtiene los listings que coinciden con los IDs pasados
-    const listingsToCompare = getListingCompare(idsArray);
-
-    res.json(listingsToCompare);
-});
-
-
-// Iniciar servidor localmente
-app.use("/api", router);
-
+// Servidor local para tableros (boards)
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Boards Service is running on http://localhost:${port}`);
 });
