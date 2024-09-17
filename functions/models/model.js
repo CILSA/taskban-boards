@@ -1,8 +1,7 @@
-// Importa Firebase y Firestore
+import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc, doc, addDoc } from "firebase/firestore";
 
-// Configura Firebase (usa tu propia configuración obtenida de Firebase Console)
+// Configuración de Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyCx8GI5km0guJojFuOb9KDKNSclqFQBhLI",
     authDomain: "taskban-v1.firebaseapp.com",
@@ -17,7 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Obtener todos los boards
+// Obtener todos los tableros
 export const getBoards = async () => {
     const boardsCollection = collection(db, 'boards');
     const boardsSnapshot = await getDocs(boardsCollection);
@@ -28,7 +27,7 @@ export const getBoards = async () => {
     return boardsList;
 };
 
-// Obtener un board por su ID
+// Obtener un tablero por su ID
 export const getBoardById = async (id) => {
     const boardRef = doc(db, 'boards', id);
     const boardSnapshot = await getDoc(boardRef);
@@ -40,7 +39,7 @@ export const getBoardById = async (id) => {
     }
 };
 
-// Crear un nuevo board
+// Crear un nuevo tablero
 export const createBoard = async (board) => {
     try {
         const boardsCollection = collection(db, 'boards');
@@ -52,3 +51,26 @@ export const createBoard = async (board) => {
     }
 };
 
+// Actualizar un tablero por su ID
+export const updateBoard = async (id, boardData) => {
+    const boardRef = doc(db, 'boards', id);
+    try {
+        await updateDoc(boardRef, boardData);
+        return { id, ...boardData };
+    } catch (error) {
+        console.error("Error al actualizar el board:", error);
+        throw error;
+    }
+};
+
+// Eliminar un tablero por su ID
+export const deleteBoard = async (id) => {
+    const boardRef = doc(db, 'boards', id);
+    try {
+        await deleteDoc(boardRef);
+        return true;
+    } catch (error) {
+        console.error("Error al eliminar el board:", error);
+        return false;
+    }
+};

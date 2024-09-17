@@ -1,5 +1,6 @@
-import { getBoards, getBoardById, createBoard } from "../models/model";
+import { getBoards, getBoardById, createBoard, updateBoard, deleteBoard } from "../models/model";
 
+// Obtener todos los tableros
 export const fetchBoards = async (req, res) => {
     try {
         const boards = await getBoards();
@@ -10,10 +11,11 @@ export const fetchBoards = async (req, res) => {
     }
 };
 
+// Obtener un tablero por su ID
 export const fetchBoardById = async (req, res) => {
     const { id } = req.params;
     try {
-        const board = await getBoardById(parseInt(id, 10));
+        const board = await getBoardById(id);
         if (!board) {
             return res.status(404).json({ message: "Board not found" });
         }
@@ -24,6 +26,7 @@ export const fetchBoardById = async (req, res) => {
     }
 };
 
+// Crear un nuevo tablero
 export const addBoard = async (req, res) => {
     const { name, description } = req.body;
 
@@ -37,5 +40,41 @@ export const addBoard = async (req, res) => {
     } catch (error) {
         console.error("Error creating board:", error);
         res.status(500).json({ message: "Error creating board" });
+    }
+};
+
+// Actualizar un tablero por su ID
+export const updateBoardById = async (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    if (!name || !description) {
+        return res.status(400).json({ message: "Name and description are required" });
+    }
+
+    try {
+        const updatedBoard = await updateBoard(id, req.body);
+        if (!updatedBoard) {
+            return res.status(404).json({ message: "Board not found" });
+        }
+        res.json({ message: "Board updated", board: updatedBoard });
+    } catch (error) {
+        console.error("Error updating board:", error);
+        res.status(500).json({ message: "Error updating board" });
+    }
+};
+
+// Eliminar un tablero por su ID
+export const deleteBoardById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleted = await deleteBoard(id);
+        if (!deleted) {
+            return res.status(404).json({ message: "Board not found" });
+        }
+        res.json({ message: "Board deleted" });
+    } catch (error) {
+        console.error("Error deleting board:", error);
+        res.status(500).json({ message: "Error deleting board" });
     }
 };
