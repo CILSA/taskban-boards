@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchBoards, fetchBoardById, addBoard } from "../controllers/controller.js";
+import { fetchBoards, fetchBoardById, addBoard } from "../controllers/controller";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import { getBoards, getBoardById, createBoard } from "../models/model.js";
+import { getBoards, getBoardById, createBoard } from "../models/model";
 
 export const fetchBoards = async (req, res) => {
     try {

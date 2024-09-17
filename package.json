@@ -1,7 +1,7 @@
 {
-  "name": "mandalas-de-agua-backend",
+  "name": "taskban-board",
   "version": "1.0.0",
-  "description": "API Rest de mandalas de agua.",
+  "description": "Servicio de tableros - taskban.",
   "main": "functions/server.js",
   "scripts": {
     "build": "netlify deploy --prod",
