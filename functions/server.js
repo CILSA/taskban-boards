@@ -2,11 +2,11 @@
 import express from "express";
 import cors from "cors";
 import serverless from "serverless-http";
-import express from "express";
 import { fetchBoards, fetchBoardById, addBoard } from "./controllers/controller";
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 const router = express.Router();
 
 router.get("/boards", fetchBoards); // Obtener todos los boards o filtrar por ID
