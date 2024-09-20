@@ -26,16 +26,16 @@ export const fetchBoardById = async (req, res) => {
     }
 };
 
-// Crear un nuevo tablero con columnas
+// Crear un nuevo tablero con columnas y teamId
 export const addBoard = async (req, res) => {
-    const { name, description, columns } = req.body;
+    const { name, description, columns, teamId } = req.body;
 
-    if (!name || !description) {
-        return res.status(400).json({ message: "Name and description are required" });
+    if (!name || !description || !teamId) {
+        return res.status(400).json({ message: "Name, description, and teamId are required" });
     }
 
     try {
-        const boardId = await createBoard({ name, description, columns });
+        const boardId = await createBoard({ name, description, columns, teamId });
         res.status(201).json({ message: "Board created", boardId });
     } catch (error) {
         console.error("Error creating board:", error);
@@ -43,17 +43,17 @@ export const addBoard = async (req, res) => {
     }
 };
 
-// Actualizar un tablero por su ID
+// Actualizar un tablero por su ID (incluye teamId)
 export const updateBoardById = async (req, res) => {
     const { id } = req.params;
-    const { name, description, columns } = req.body;
+    const { name, description, columns, teamId } = req.body;
 
-    if (!name || !description) {
-        return res.status(400).json({ message: "Name and description are required" });
+    if (!name || !description || !teamId) {
+        return res.status(400).json({ message: "Name, description, and teamId are required" });
     }
 
     try {
-        const updatedBoard = await updateBoard(id, { name, description, columns });
+        const updatedBoard = await updateBoard(id, { name, description, columns, teamId });
         if (!updatedBoard) {
             return res.status(404).json({ message: "Board not found" });
         }
@@ -63,6 +63,7 @@ export const updateBoardById = async (req, res) => {
         res.status(500).json({ message: "Error updating board" });
     }
 };
+
 
 // Eliminar un tablero por su ID
 export const deleteBoardById = async (req, res) => {

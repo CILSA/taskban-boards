@@ -39,7 +39,7 @@ export const getBoardById = async (id) => {
     }
 };
 
-// Crear un nuevo tablero con columnas
+// Crear un nuevo tablero con columnas y teamId
 export const createBoard = async (board) => {
     try {
         const boardsCollection = collection(db, 'boards');
@@ -51,7 +51,7 @@ export const createBoard = async (board) => {
     }
 };
 
-// Actualizar un tablero por su ID
+// Actualizar un tablero por su ID (incluye teamId)
 export const updateBoard = async (id, boardData) => {
     const boardRef = doc(db, 'boards', id);
     try {
@@ -62,6 +62,7 @@ export const updateBoard = async (id, boardData) => {
         throw error;
     }
 };
+
 
 // Eliminar un tablero por su ID
 export const deleteBoard = async (id) => {
