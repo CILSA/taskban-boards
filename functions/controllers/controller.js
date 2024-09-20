@@ -2,14 +2,21 @@ import { getBoards, getBoardById, createBoard, updateBoard, deleteBoard } from "
 
 // Obtener todos los tableros
 export const fetchBoards = async (req, res) => {
+    const { teamId } = req.query; // Obtener el teamId de la query
+
+    if (!teamId) {
+        return res.status(400).json({ message: "teamId is required" });
+    }
+
     try {
-        const boards = await getBoards();
+        const boards = await getBoards(teamId);
         res.json(boards);
     } catch (error) {
         console.error("Error fetching boards:", error);
         res.status(500).json({ message: "Error fetching boards" });
     }
 };
+
 
 // Obtener un tablero por su ID
 export const fetchBoardById = async (req, res) => {

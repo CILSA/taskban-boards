@@ -16,14 +16,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Obtener todos los tableros
-export const getBoards = async () => {
+// Obtener todos los tableros filtrando por teamId
+export const getBoards = async (teamId) => {
     const boardsCollection = collection(db, 'boards');
     const boardsSnapshot = await getDocs(boardsCollection);
-    const boardsList = boardsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
+    const boardsList = boardsSnapshot.docs
+        .map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+        }))
+        .filter(board => board.teamId === teamId); // Filtrar por teamId
     return boardsList;
 };
 
