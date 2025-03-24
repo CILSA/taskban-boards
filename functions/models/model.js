@@ -1,16 +1,18 @@
 import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
+import dotenv from 'dotenv';
+dotenv.config();
 
-// Configuración de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyCx8GI5km0guJojFuOb9KDKNSclqFQBhLI",
-    authDomain: "taskban-v1.firebaseapp.com",
-    projectId: "taskban-v1",
-    storageBucket: "taskban-v1.appspot.com",
-    messagingSenderId: "774075443466",
-    appId: "1:774075443466:web:0b1ccf90595264ef8872f3",
-    measurementId: "G-1MCX6F9W86"
+    apiKey: process.env.VITE_API_KEY,
+    authDomain: process.env.VITE_AUTH_DOMAIN,
+    projectId: process.env.VITE_PROJECT_ID,
+    storageBucket: process.env.VITE_STORAGE_BUCKET,
+    messagingSenderId: process.env.VITE_MESSAGING_SENDER_ID,
+    appId: process.env.VITE_APP_ID,
+    measurementId: process.env.VITE_MEASUREMENT_ID,
 };
+
 
 // Inicializa Firebase y Firestore
 const app = initializeApp(firebaseConfig);
